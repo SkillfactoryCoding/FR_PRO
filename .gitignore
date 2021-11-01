@@ -1,0 +1,15 @@
+.cdn
+.DS_Store
+.env
+.vscode
+.idea/
+*.sw*
+.eslintcache
+coverage/
+/app/*
+/dist
+/builds/*
+jsconfig.json
+node_modules/
+npm-debug.log
+.editorconfig
