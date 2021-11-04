@@ -1,6 +1,7 @@
 require('dotenv').config()
 const express = require('express')
 const mongoose = require('mongoose')
+const cors = require('cors')
 
 const authRouter = require('./src/routes/auth')
 const casesRouter = require('./src/routes/cases')
@@ -10,6 +11,8 @@ const publicRouter = require('./src/routes/public')
 const uri = process.env.DB_URI
 const port = process.env.PORT
 const server = express()
+
+server.use(cors())
 
 server.use(express.json())
 server.use('/api/auth', authRouter)

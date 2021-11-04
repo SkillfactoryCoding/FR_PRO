@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const {body, validationResult} = require('express-validator')
 const User = require('../models/User')
+const authMiddleware = require('../middleware/auth')
 const {formatErrorMessage} = require('../utils')
 
 const secretKey = process.env.SECRET_KEY
@@ -83,11 +84,54 @@ router.post('/sign_in', async (req, res) => {
 			status: 'OK',
 			data: {
 				token,
-				user,
+				user: {
+					id: user.id,
+					email: user.email,
+					firstName: user.firstName,
+					lastName: user.lastName,
+					approved: user.approved,
+				},
 			}
 		})
 	} catch (err) {
 		console.log(err)
+		res.send({
+			status: 'ERR',
+			errCode: 'SERVER_ERR',
+			message: `Произошла ошибка на сервере: ${err}`
+		})
+	}
+})
+
+router.get('/', authMiddleware,
+async (req, res) => {
+	try {
+		const user = await User.findOne({_id: req.user.id})
+
+		if (!user) {
+			return res.status(400).json({
+				status: 'ERR',
+				errCode: 'UNKNOWN_USER',
+				message: `Пользователь с ID ${req.user.id} не существует`
+			})
+		}
+
+		const token = jwt.sign({id: user.id}, secretKey, {expiresIn: '7d'})
+		return res.json({
+			status: 'OK',
+			data: {
+				token,
+				user: {
+					id: user.id,
+					email: user.email,
+					firstName: user.firstName,
+					lastName: user.lastName,
+					approved: user.approved,
+				},
+			}
+		})
+	} catch (e) {
+		console.log(e)
 		res.send({
 			status: 'ERR',
 			errCode: 'SERVER_ERR',
