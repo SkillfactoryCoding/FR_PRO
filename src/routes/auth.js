@@ -17,7 +17,7 @@ router.post('/sign_up', [
 ],
 async (req, res) => {
 	try {
-		const {email, password, clientId} = req.body
+		const {email, password, clientId, firstName, lastName} = req.body
 		const emailExists = await User.findOne({email})
 		if (emailExists) {
 			return res.status(400).json({
@@ -42,7 +42,14 @@ async (req, res) => {
 		const usersCount = await User.count({clientId})
 		const isApproved = usersCount < 1
 
-		const user = new User({email, password: hashPassword, approved: isApproved, clientId})
+		const user = new User({
+			email,
+			password: hashPassword,
+			firstName: firstName || null,
+			lastName: lastName || null,
+			approved: isApproved,
+			clientId
+		})
 		user.save()
 		return res.json({
 			status: 'OK'
