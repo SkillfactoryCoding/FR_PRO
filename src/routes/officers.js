@@ -101,7 +101,7 @@ router.put('/:id', [
 			firstName: data.firstName || officerExists.firstName,
 			lastName: data.lastName || officerExists.lastName,
 			password: newPassword || officerExists.password,
-			approved: data.approved || officerExists.approved,
+			approved: data.approved !== undefined ? data.approved : officerExists.approved,
 		}
 
 		const updatedOfficer = await User.findOneAndUpdate({_id: officerId}, officer, {returnOriginal: false})
