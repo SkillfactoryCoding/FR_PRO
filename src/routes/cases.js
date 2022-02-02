@@ -27,6 +27,14 @@ router.post('/', [
 
 		const authorizedUser = await User.findOne({_id: req.user.id})
 
+		if (data.officer && !mongoose.Types.ObjectId.isValid(data.officer)) {
+			return res.status(400).json({
+				status: 'ERR',
+				errCode: 'INVALID_ID',
+				message: `Неверный формат ID сотрудника`
+			})
+		}
+
 		let officerId
 		if (data.officer) {
 			const officer = await User.findOne({_id: data.officer})

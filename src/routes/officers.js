@@ -91,7 +91,7 @@ router.put('/:id', [
 			})
 		}
 
-		const isPasswordChanged = data.password && bcrypt.compareSync(data.password, officerExists.password)
+		const isPasswordChanged = data.password && !bcrypt.compareSync(data.password, officerExists.password)
 		let newPassword
 		if (isPasswordChanged) {
 			newPassword = await bcrypt.hash(data.password, 8)
